@@ -342,7 +342,7 @@ def text_processing(text, function, foo):
 
 def static_fetcher(foo, function):
     if foo == "pgh":
-        url = "pittsburgh/" + f"{function}" + ".txt"
+        url = "static/pittsburgh/" + f"{function}" + ".txt"
         text = open(url, "r")
         result = text_processing(text, function, foo)
         return result

@@ -21,32 +21,20 @@ def time_converter(foo):
 
 
 def bus_trip(foo, trip, vdata, tdata, city):
-    if city == "satx":
-        bus_data = vdata.entity[foo]
-        bus_model = bus_data.vehicle.vehicle.id
-        bus_route = bus_data.vehicle.trip.route_id
-
-        routes = static_fetcher(city, "routes")
-        trips = static_fetcher(city, "trips")
-        stops = static_fetcher(city, "stops")
-
-        route_name = routes[bus_route].route_long_name
-        if trip in trips:
-            trip_headsign = trips[trip].trip_headsign
-            combined_name = f"\x1b[33mRoute \x1b[34m{bus_route} \x1b[35m{route_name} to \x1b[36m{trip_headsign}\x1b[0m"
-        else:
-            combined_name = f"\x1b[33mRoute \x1b[34m{bus_route} \x1b[35m{route_name}\x1b[0m"
-
-
+    bus_data = vdata.entity[foo]
+    bus_model = bus_data.vehicle.vehicle.id
+    bus_route = bus_data.vehicle.trip.route_id
+    routes = static_fetcher(city, "routes")
+    trips = static_fetcher(city, "trips")
+    stops = static_fetcher(city, "stops")
+    route_name = routes[bus_route].route_long_name
+    if trip in trips:
+        trip_headsign = trips[trip].trip_headsign
+        combined_name = f"\x1b[33mRoute \x1b[34m{bus_route} \x1b[35m{route_name} to \x1b[36m{trip_headsign}\x1b[0m"
         current_trip = tdata.entity[trip]
         current_stop = current_trip.trip_update.stop_time_update[0]
         current_stop_name = stops[current_stop.stop_id].stop_name
-
-        if bus_data.vehicle.current_status:
-            bus_status = status_converter(bus_data.vehicle.current_status)
-        else:
-            bus_status = "in transit to"
-        string_return = f"#{bus_model} {combined_name} is {bus_status} {current_stop_name}"
+        string_return = f"#{bus_model} {combined_name} is in transit to {current_stop_name}"
         if current_stop.arrival is not None and current_stop.departure is not None:
             time_a = time_converter(int(current_stop.arrival.time))
             time_d = time_converter(int(current_stop.departure.time))
@@ -61,18 +49,22 @@ def bus_trip(foo, trip, vdata, tdata, city):
             string = ''
         print(string_return)
         print(string)
-
+    else:
+        combined_name = f"\x1b[33mRoute \x1b[34m{bus_route} \x1b[35m{route_name}\x1b[0m"
+        string_return = f"#{bus_model} is not running a route."
+        print(string_return)
 
 def buses_in_range(foo, bar, vdata, tdata, city):
     print(f"{foo}-{bar}")
     min_int = int(foo)
     max_int = int(bar)
     for i in range(min_int, max_int+1):
-        if str(i) in vdata.entity:
-            bus = vdata.entity[str(i)]
-            if bus.vehicle.trip:
-                trip = bus.vehicle.trip.trip_id
-                bus_trip(str(i), trip, vdata, tdata, city)
+        for j in vdata.entity:
+            if str(i) == vdata.entity[j].vehicle.vehicle.id:
+                bus = vdata.entity[str(i)]
+                if bus.vehicle.trip:
+                    trip = bus.vehicle.trip.trip_id
+                    bus_trip(str(i), trip, vdata, tdata, city)
 
 
 def buses_on_route(route, vdata, tdata, city):

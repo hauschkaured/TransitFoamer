@@ -29,6 +29,7 @@ def pattern_analyzer(pattern, trips_data): # Routes that run on a given PATTERN
             buses.add(items[1])
     return buses
 
+
 def trips_per_pattern(pattern, trips_data):
     count = 0
     for line in trips_data.splitlines():
