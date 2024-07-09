@@ -16,10 +16,10 @@ def trips_analyzer():
     pattern_analyzer("2", trips_data)
     print(trips_on_route('RLSH', trips_data))
 
-    # print(f"Pattern 1 has {trips_per_pattern("1", trips_data)} trips (Saturday)")
-    # print(f"Pattern 2 has {trips_per_pattern("2", trips_data)} trips (Sunday)")
-    # print(f"Pattern 3 has {trips_per_pattern("3", trips_data)} trips (Thursday)")
-    # print(f"Pattern 4 has {trips_per_pattern("4", trips_data)} trips (M-F)")
+    print(f"Pattern 1 has {trips_per_pattern("1", trips_data)} trips (Saturday)")
+    print(f"Pattern 2 has {trips_per_pattern("2", trips_data)} trips (Sunday)")
+    print(f"Pattern 3 has {trips_per_pattern("3", trips_data)} trips (Thursday)")
+    print(f"Pattern 4 has {trips_per_pattern("4", trips_data)} trips (M-F)")
 
 def pattern_analyzer(pattern, trips_data): # Routes that run on a given PATTERN
     buses = set()

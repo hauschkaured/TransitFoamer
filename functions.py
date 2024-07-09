@@ -28,7 +28,7 @@ def bus_trip(foo, trip, vdata, tdata, city):
     trips = static_fetcher(city, "trips")
     stops = static_fetcher(city, "stops")
     route_name = routes[bus_route].route_long_name
-    if trip in trips:
+    if trip in tdata.entity:
         trip_headsign = trips[trip].trip_headsign
         combined_name = f"\x1b[33mRoute \x1b[34m{bus_route} \x1b[35m{route_name} to \x1b[36m{trip_headsign}\x1b[0m"
         current_trip = tdata.entity[trip]

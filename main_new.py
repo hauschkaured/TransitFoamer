@@ -47,11 +47,12 @@ def data_select(foo, function, city):
         # Online
         vehicle_data = main(prt_bus_vehicles, "./prt_bus_vehicles.out")
         trip_data = main(prt_bus_trips, "./prt_bus_trips.out")
-        # trainData = main(prt_train_vehicles, "./prt_train_vehicles.out")
-        # trainTripData = main(prt_train_trips, "./prt_train_trips.out")
-        vdata = processing(vehicle_data, "vehicle_position")
-        tdata = processing(trip_data, "trip_update")
+        trainData = main(prt_train_vehicles, "./prt_train_vehicles.out")
+        trainTripData = main(prt_train_trips, "./prt_train_trips.out")
+        vdata = processing(trainData, "vehicle_position")
+        tdata = processing(trainTripData, "trip_update")
         data_analyzer(raw_data, function, vdata, tdata, city)
+
 
 def data_analyzer(raw_data, function, vdata, tdata, city):
     for item in raw_data.split(','):
@@ -70,7 +71,6 @@ def data_analyzer(raw_data, function, vdata, tdata, city):
             route = item
             buses_on_route(route, vdata, tdata, city)
     
-
 
 def mode_select(foo):
     if len(foo) >= 5:
