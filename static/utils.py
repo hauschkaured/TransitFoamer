@@ -15,11 +15,11 @@ def trips_analyzer():
     trips_data = trips.read()
     pattern_analyzer("2", trips_data)
     print(trips_on_route('RLSH', trips_data))
-
     print(f"Pattern 1 has {trips_per_pattern("1", trips_data)} trips (Saturday)")
     print(f"Pattern 2 has {trips_per_pattern("2", trips_data)} trips (Sunday)")
     print(f"Pattern 3 has {trips_per_pattern("3", trips_data)} trips (Thursday)")
     print(f"Pattern 4 has {trips_per_pattern("4", trips_data)} trips (M-F)")
+
 
 def pattern_analyzer(pattern, trips_data): # Routes that run on a given PATTERN
     buses = set()
@@ -55,5 +55,21 @@ def stops_on_trip(trip):
             stop_name = stops_dict[stop_number].stop_name
             print(arrival, departure, stop_name)
 
-trips_analyzer()
+
+# def schedule_generator(route):
+#     trips_data = open("pittsburgh/trips.txt", "r")
+#     for line in trips_data.read().splitlines():
+#         items = line.split(',')
+#         if items[0] == route:
+#             trip_time_grabber(items[2])
+#
+#
+# def trip_time_grabber(trip):
+#     stop_times = open("pittsburgh/stop_times.txt", "r")
+#     for line in stop_times.read().splitlines():
+#         items = line.split(',')
+
+
+
+
 
