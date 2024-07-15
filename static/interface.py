@@ -200,7 +200,26 @@ def text_processing(text, function, foo):
     # Reading the data 
     textdata = text.read()
     data = textdata.splitlines()
+
     header = data[0]
+    if function == "agency":
+        agency["header"] = header
+    elif function == "calendar":
+        calendar["header"] = header
+    elif function == "calendar_dates":
+        calendar_dates["header"] = header
+    elif function == "feed":
+        feed["header"] = header
+    elif function == "routes":
+        routes["header"] = header
+    elif function == "shapes":
+        shapes["header"] = header
+    elif function == "stops":
+        stops["header"] = header
+    elif function == "stop_times":
+        stop_times["header"] = header
+    elif function == "trips":
+        trips["header"] = header
     removed_header = data[1:]
     namespace = dict()
     for line in removed_header:
@@ -208,7 +227,7 @@ def text_processing(text, function, foo):
         item_list = []
         for i in items:
             item_list.append(i)
-        if function == "agency":
+        if function == "agency": # Configured normally
             agency_id = item_list[0]
             agency_name = item_list[1]
             agency_url = item_list[2]
@@ -262,7 +281,7 @@ def text_processing(text, function, foo):
                          route_desc, route_type, route_url, route_color,
                          route_text_color)
             routes[route_id] = obj
-        elif function == "shapes":
+        elif function == "shapes": # Configured Normally
             id = item_list[0]
             lat = item_list[1]
             lon = item_list[2]
@@ -270,8 +289,8 @@ def text_processing(text, function, foo):
             shape_dist_traveled = item_list[4]
             obj = Shapes(id, lat, lon, sequence, shape_dist_traveled)
             shapes[id] = obj
-        elif function == "stop_times":  # Needs to be re-implemented! 
-            id = item_list[0]
+        elif function == "stop_times":
+            trip_id = item_list[0]
             arrival = item_list[1]
             departure = item_list[2]
             stop_id = item_list[3]
@@ -281,13 +300,13 @@ def text_processing(text, function, foo):
             dropoff_type = item_list[7]
             shape_dist_traveled = item_list[8]
             timepoint = item_list[9]
-            obj = StopTimes(id, arrival, departure, stop_id, None, None, stopseq, headsign,
+            obj = StopTimes(trip_id, arrival, departure, stop_id, None, None, stopseq, headsign,
                             None, None, pickup_type, dropoff_type,
                             None, None, shape_dist_traveled, timepoint,
                             None, None)
-            stop_times[stop_id] = obj
-        elif function == "stops":  # Needs to be re implemented! Current problem
-            stop_id = item_list[0]  # Assigns one stop code to one list iten, when it must be done to several.
+            stop_times[(trip_id, stopseq)] = obj
+        elif function == "stops": # Configured normally
+            stop_id = item_list[0]
             stop_code = item_list[1]
             stop_name = item_list[2]
             stop_desc = item_list[3]
@@ -300,21 +319,32 @@ def text_processing(text, function, foo):
             stop_timezone = item_list[10]
             wheelchair_boarding = item_list[11]
             obj = Stops(stop_id, stop_code, stop_name, None, stop_desc, stop_lat, stop_lon, zone_id,
-                        stop_url, None, None, stop_timezone, wheelchair_boarding)
+                        stop_url, location_type, parent_station, stop_timezone, wheelchair_boarding)
             stops[stop_id] = obj
         elif function == "transfers":
             pass
         elif function == "trips":
-            trip_id= item_list[0]
-            route_id = item_list[1]
-            service_id = item_list[2]
+            if foo == "pgh":
+                trip_id = item_list[0]
+                route_id = item_list[1]
+                service_id = item_list[2]
+            else:
+                route_id = item_list[0]
+                service_id = item_list[1]
+                trip_id = item_list[2]
             headsign = item_list[3]
             short_name = item_list[4]
             direction_id = item_list[5]
             block_id = item_list[6]
             shape_id = item_list[7]
-            wheelchair = item_list[8]
-            bikes = item_list[9]
+            if foo == "sea":
+                peak_flag = item_list[8] # UNUSED, SPECIFIC TO SEATTLE
+                fare_id = item_list[9] # UNUSED, SPECIFIC TO SEATTLE
+                wheelchair = item_list[10]
+                bikes = item_list[11]
+            else:
+                wheelchair = item_list[8]
+                bikes = item_list[9]
             obj = Trips(route_id, service_id, trip_id, headsign, short_name, 
                         direction_id, block_id, shape_id, wheelchair, bikes)
             trips[trip_id] = obj
@@ -342,12 +372,13 @@ def text_processing(text, function, foo):
 
 def static_fetcher(foo, function):
     if foo == "pgh":
-        url = "static/pittsburgh/" + f"{function}" + ".txt"
-        text = open(url, "r")
-        result = text_processing(text, function, foo)
-        return result
+        url = "static/pittsburgh/prt/" + f"{function}" + ".txt"
     elif foo == "satx":
-        url = "static/san_antonio/" + f"{function}" + ".txt"
-        text = open(url, "r")
-        result = text_processing(text, function, foo)
-        return result
+        url = "static/san_antonio/via/" + f"{function}" + ".txt"
+    elif foo == "sea":
+        url = "static/seattle/king_county/" + f"{function}" + ".txt"
+    else:
+        url = ""
+    text = open(url, "r")
+    result = text_processing(text, function, foo)
+    return result
