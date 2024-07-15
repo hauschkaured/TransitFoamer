@@ -4,13 +4,6 @@ from google.protobuf import json_format
 import json
 import ast
 
-prt_bus_vehicles: str = "https://truetime.portauthority.org/gtfsrt-bus/vehicles"
-prt_bus_trips: str = "https://truetime.portauthority.org/gtfsrt-bus/trips"
-prt_train_vehicles: str = "https://truetime.portauthority.org/gtfsrt-train/vehicles"
-prt_train_trips: str = "https://truetime.portauthority.org/gtfsrt-train/trips"
-via_bus_vehicles: str = "http://gtfs.viainfo.net/vehicle/vehiclepositions.pb"
-via_bus_trips: str = "http://gtfs.viainfo.net/tripupdate/tripupdates.pb"
-
 
 def rest_status_color_helper(code: int) -> str:
     """
