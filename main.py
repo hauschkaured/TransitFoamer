@@ -37,21 +37,24 @@ def data_select(foo, function, city):
     length = len(function)
     raw_data = foo[length+1:]
     if city == "satx":
-        # Online
-        vehicle_data = main(via_bus_vehicles, "./via_bus_vehicles.out")
-        trip_data = main(via_bus_trips, "./via_bus_trips.out")
-        vdata = processing(vehicle_data, "vehicle_position")
-        tdata = processing(trip_data, "trip_update")
-        data_analyzer(raw_data, function, vdata, tdata, city)
+        # vehicle_data = main(via_bus_vehicles, "./via_bus_vehicles.out")
+        # trip_data = main(via_bus_trips, "./via_bus_trips.out")
+        # vdata = processing(vehicle_data, "vehicle_position")
+        # tdata = processing(trip_data, "trip_update")
+        # data_analyzer(raw_data, function, vdata, tdata, city)
+        pass
     elif city == "pgh":
-        # Online
-        vehicle_data = main(prt_bus_vehicles, "./prt_bus_vehicles.out")
-        trip_data = main(prt_bus_trips, "./prt_bus_trips.out")
-        trainData = main(prt_train_vehicles, "./prt_train_vehicles.out")
-        trainTripData = main(prt_train_trips, "./prt_train_trips.out")
-        vdata = processing(trainData, "vehicle_position")
-        tdata = processing(trainTripData, "trip_update")
-        data_analyzer(raw_data, function, vdata, tdata, city)
+        # vehicle_data = main(prt_bus_vehicles, "./prt_bus_vehicles.out")
+        # trip_data = main(prt_bus_trips, "./prt_bus_trips.out")
+        # trainData = main(prt_train_vehicles, "./prt_train_vehicles.out")
+        # trainTripData = main(prt_train_trips, "./prt_train_trips.out")
+        # vdata = processing(trainData, "vehicle_position")
+        # tdata = processing(trainTripData, "trip_update")
+        # data_analyzer(raw_data, function, vdata, tdata, city)
+        pass
+    elif city == "nyc_subway":
+        nyc = main("https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs", "./a.out")
+
 
 
 def data_analyzer(raw_data, function, vdata, tdata, city):
@@ -123,6 +126,9 @@ def input_processing_level2(foo):
         city_name = "pgh"
         listed_features(features, foo)
         main_call(city_name)
+    elif foo == "nyc_subway":
+        city_name = "nyc_subway"
+        main_call(city_name)
     else:
         print("Error: invalid input. Please try again!")
         body_second_pass()
@@ -140,6 +146,8 @@ def input_processing_level1(foo):
     elif (foo == "San Antonio" or foo == "san antonio"
         or foo == "San antonio"):
         input_processing_level2("satx")
+    elif foo == "nyc_subway":
+        input_processing_level2("nyc_subway")
     else:
         print("Error: invalid input. Please try again!")
         body_second_pass()

@@ -5,7 +5,8 @@ pprint = pp.pprint
 
 
 class Agency:
-    def __init__(self, agency_id, agency_name, agency_url, agency_timezone, agency_lang, agency_phone, agency_fare_url):
+    def __init__(self, agency_id, agency_name, agency_url, agency_timezone, agency_lang, agency_phone, agency_fare_url,
+                 agency_email):
         self.agency_id = agency_id
         self.agency_name = agency_name
         self.agency_url = agency_url
@@ -13,10 +14,11 @@ class Agency:
         self.agency_lang = agency_lang
         self.agency_phone = agency_phone
         self.agency_fare_url = agency_fare_url
+        self.agency_email = agency_email
 
     def __repr__(self):
-        return f"""{self.agency_id} {self.agency_name} {self.agency_url}
-        {self.agency_timezone} {self.agency_lang} {self.agency_phone} {self.agency_fare_url}"""
+        return f'''{self.agency_id},{self.agency_name},{self.agency_url},{self.agency_timezone},{self.agency_lang}, 
+        {self.agency_phone},{self.agency_fare_url},{self.agency_email}'''
 
 
 class Calendar:
@@ -38,7 +40,7 @@ class Calendar:
         {self.friday} {self.saturday} {self.sunday} {self.start_date} {self.end_date}"""
 
 
-class Dates:
+class CalendarDates:
     def __init__(self, service_id, date, exception_type):
         self.service_id = service_id
         self.date = date
@@ -49,22 +51,36 @@ class Dates:
 
 
 class Feed:
-    def __init__(self, publisher, url, lang, start, end, version):
-        self.publisher = publisher
-        self.url = url
-        self.lang = lang
-        self.start = start
-        self.end = end
-        self.version = version
+    def __init__(self, feed_publisher_name, feed_publisher_url, feed_lang, default_lang, feed_start_date, feed_end_date,
+                 feed_version, feed_contact_email, feed_contact_url):
+        self.feed_publisher_name = feed_publisher_name
+        self.feed_publisher_url = feed_publisher_url
+        self.feed_lang = feed_lang
+        self.default_lang = default_lang
+        self.feed_start_date = feed_start_date
+        self.feed_end_date = feed_end_date
+        self.feed_version = feed_version
+        self.feed_contact_email = feed_contact_email
+        self.feed_contact_url = feed_contact_url
 
     def __repr__(self):
-        return f'''PUB {self.publisher} URL {self.url} LANG {self.lang} \n
-        ST {self.start} END {self.end} VER {self.version}'''
+        return f'''{self.feed_publisher_name} {self.feed_publisher_url} {self.feed_lang} {self.default_lang} 
+        {self.feed_start_date} {self.feed_end_date} {self.feed_version} {self.feed_contact_email} {self.feed_contact_url}'''
+
+
+class Levels:
+    def __init__(self, level_id, level_index, level_name):
+        self.level_id = level_id
+        self.level_index = level_index
+        self.level_name = level_name
+
+    def __repr__(self):
+        return f'''{self.level_id} {self.level_index} {self.level_name}'''
 
 
 class Routes:
     def __init__(self, route_id, agency_id, route_short_name, route_long_name, route_desc, route_type, route_url,
-                 route_color, route_text_color):
+                 route_color, route_text_color, route_sort_color, continuous_pickup, continuous_drop_off, network_id):
         self.route_id = route_id
         self.agency_id = agency_id
         self.route_short_name = route_short_name
@@ -74,10 +90,15 @@ class Routes:
         self.route_url = route_url
         self.route_color = route_color
         self.route_text_color = route_text_color
+        self.route_sort_color = route_sort_color
+        self.continuous_pickup = continuous_pickup
+        self.continuous_drop_off = continuous_drop_off
+        self.network_id = network_id
 
     def __repr__(self):
         return f'''{self.route_id} {self.agency_id} {self.route_short_name} {self.route_long_name}
-        {self.route_desc} {self.route_type} {self.route_url} {self.route_color} {self.route_text_color}'''
+        {self.route_desc} {self.route_type} {self.route_url} {self.route_color} {self.route_text_color}
+        {self.route_sort_color} {self.continuous_pickup} {self.continuous_drop_off} {self.network_id}'''
 
 
 class Shapes:
@@ -127,7 +148,7 @@ class StopTimes:
 
 class Stops:
     def __init__(self, stop_id, stop_code, stop_name, tts_stop_name, stop_desc, stop_lat, stop_lon, zone_id,
-                 stop_url, location_type, parent_station, stop_timezone, wheelchair_boarding):
+                 stop_url, location_type, parent_station, stop_timezone, wheelchair_boarding, level_id, platform_code):
         self.stop_id = stop_id
         self.stop_code = stop_code
         self.stop_name = stop_name
@@ -141,6 +162,8 @@ class Stops:
         self.parent_station = parent_station
         self.stop_timezone = stop_timezone
         self.wheelchair_boarding = wheelchair_boarding
+        self.level_id = level_id
+        self.platform_code = platform_code
 
     def __repr__(self):
         return f"""{self.stop_id}: {self.stop_code} {self.stop_name} {self.tts_stop_name} {self.stop_desc}
@@ -190,163 +213,333 @@ def text_processing(text, function, foo):
     agency = dict()
     calendar_dates = dict()
     calendar = dict()
-    feed = dict()
     routes = dict()
     shapes = dict()
     stop_times = dict()
     stops = dict()
-    transfers = dict()
     trips = dict()
     # Reading the data 
-    textdata = text.read()
-    data = textdata.splitlines()
-
-    header = data[0]
-    if function == "agency":
-        agency["header"] = header
-    elif function == "calendar":
-        calendar["header"] = header
-    elif function == "calendar_dates":
-        calendar_dates["header"] = header
-    elif function == "feed":
-        feed["header"] = header
-    elif function == "routes":
-        routes["header"] = header
-    elif function == "shapes":
-        shapes["header"] = header
-    elif function == "stops":
-        stops["header"] = header
-    elif function == "stop_times":
-        stop_times["header"] = header
-    elif function == "trips":
-        trips["header"] = header
+    data = text.read().splitlines()
+    # header = data[0]
+    # #  Header debug
+    # if function == "agency":
+    #     agency["header"] = header
+    # elif function == "calendar":
+    #     calendar["header"] = header
+    # elif function == "calendar_dates":
+    #     calendar_dates["header"] = header
+    # elif function == "routes":
+    #     routes["header"] = header
+    # elif function == "shapes":
+    #     shapes["header"] = header
+    # elif function == "stops":
+    #     stops["header"] = header
+    # elif function == "stop_times":
+    #     stop_times["header"] = header
+    # elif function == "trips":
+    #     trips["header"] = header
     removed_header = data[1:]
-    namespace = dict()
     for line in removed_header:
         items = line.split(',')
-        item_list = []
-        for i in items:
-            item_list.append(i)
         if function == "agency": # Configured normally
-            agency_id = item_list[0]
-            agency_name = item_list[1]
-            agency_url = item_list[2]
-            agency_timezone = item_list[3]
-            agency_lang = item_list[4]
-            agency_phone = item_list[5]
-            agency_fare_url = item_list[6]
-            obj = Agency(agency_id, agency_name, agency_url, agency_timezone, agency_lang,
-                         agency_phone, agency_fare_url)
+            if (foo == "manhattan" or foo == "nyc_subway" or foo == "brooklyn" or foo == "queens" or foo == "bronx"
+            or foo == "staten_island"):
+                agency_id = items[0]
+                agency_name = items[1]
+                agency_url = items[2]
+                agency_timezone = items[3]
+                agency_lang = items[4]
+                agency_phone = items[5]
+                obj = Agency(agency_id, agency_name, agency_url, agency_timezone, agency_lang,
+                             agency_phone, None, None)
+            elif foo == "chicago":
+                agency_name = items[0]
+                agency_url = items[1]
+                agency_timezone = items[2]
+                agency_lang = items[3]
+                agency_phone = items[4]
+                agency_fare_url = items[5]
+                obj = Agency(None, agency_name, agency_url, agency_timezone, agency_lang,
+                             agency_phone, agency_fare_url, None)
+            else:
+                agency_id = items[0]
+                agency_name = items[1]
+                agency_url = items[2]
+                agency_timezone = items[3]
+                agency_lang = items[4]
+                agency_phone = items[5]
+                agency_fare_url = items[6]
+                obj = Agency(agency_id, agency_name, agency_url, agency_timezone, agency_lang,
+                             agency_phone, agency_fare_url, None)
             agency[foo] = obj
         elif function == "calendar_dates":
-            service_id = item_list[0]
-            date = item_list[1]
-            exception_type = item_list[2]
-            obj = Dates(service_id, date, exception_type)
-            calendar_dates[service_id] = obj
+            service_id = items[0]
+            date = items[1]
+            exception_type = items[2]
+            obj = CalendarDates(service_id, date, exception_type)
+            calendar_dates[(service_id, date)] = obj
         elif function == "calendar":
-            service_id = item_list[0]
-            monday = item_list[1]
-            tuesday = item_list[2]
-            wednesday = item_list[3]
-            thursday = item_list[4]
-            friday = item_list[5]
-            saturday = item_list[6]
-            sunday = item_list[7]
-            start_date = item_list[8]
-            end_date = item_list[9]
+            service_id = items[0]
+            monday = items[1]
+            tuesday = items[2]
+            wednesday = items[3]
+            thursday = items[4]
+            friday = items[5]
+            saturday = items[6]
+            sunday = items[7]
+            start_date = items[8]
+            end_date = items[9]
             obj = Calendar(service_id, monday, tuesday, wednesday, thursday, friday, saturday,
                         sunday, start_date, end_date)
             calendar[service_id] = obj
-        elif function == "feed":
-            publisher = item_list[0]
-            url = item_list[1]
-            lang = item_list[2]
-            start = item_list[3]
-            end = item_list[4]
-            version = item_list[5]
-            obj = Feed(publisher, url, lang, start, end, version)
-            feed[foo] = obj
         elif function == "routes":
-            route_id = item_list[0]
-            agency_id = item_list[1]
-            route_short_name = item_list[2]
-            route_long_name = item_list[3]
-            route_desc = item_list[4]
-            route_type = item_list[5]
-            route_url = item_list[6]
-            route_color = item_list[7]
-            route_text_color = item_list[8]
-            obj = Routes(route_id, agency_id, route_short_name, route_long_name,
-                         route_desc, route_type, route_url, route_color,
-                         route_text_color)
+            if foo == "manhattan" or foo == "brooklyn" or foo == "queens" or foo == "bronx" or foo == "staten_island":
+                route_id = items[0]
+                agency_id = items[1]
+                route_short_name = items[2]
+                route_long_name = items[3]
+                route_desc = items[4]
+                route_type = items[5]
+                route_color = items[6]
+                route_text_color = items[7]
+                obj = Routes(route_id, agency_id, route_short_name, route_long_name,
+                            route_desc, route_type, None, route_color,
+                            route_text_color, None, None, None, None)
+            elif foo == "nyc_subway":
+                agency_id = items[0]
+                route_id = items[1]
+                route_short_name = items[2]
+                route_long_name = items[3]
+                route_type = items[4]
+                route_desc = items[5]
+                route_url = items[6]
+                route_color = items[7]
+                route_text_color = items[8]
+                obj = Routes(route_id, agency_id, route_short_name, route_long_name,
+                             route_desc, route_type, route_url, route_color,
+                             route_text_color, None, None, None, None)
+            elif foo == "chicago":
+                route_id = items[0]
+                route_short_name = items[1]
+                route_long_name = items[2]
+                route_type = items[3]
+                route_url = items[4]
+                route_color = items[5]
+                route_text_color = items[6]
+                obj = Routes(route_id, None, route_short_name, route_long_name,
+                             None, route_type, route_url, route_color, route_text_color,
+                             None, None, None, None)
+            else:
+                route_id = items[0]
+                agency_id = items[1]
+                route_short_name = items[2]
+                route_long_name = items[3]
+                route_desc = items[4]
+                route_type = items[5]
+                route_url = items[6]
+                route_color = items[7]
+                route_text_color = items[8]
+                obj = Routes(route_id, agency_id, route_short_name, route_long_name,
+                             route_desc, route_type, route_url, route_color, route_text_color,
+                             None, None, None, None)
             routes[route_id] = obj
         elif function == "shapes": # Configured Normally
-            id = item_list[0]
-            lat = item_list[1]
-            lon = item_list[2]
-            sequence = item_list[3]
-            shape_dist_traveled = item_list[4]
-            obj = Shapes(id, lat, lon, sequence, shape_dist_traveled)
+            if foo == "nyc_subway":
+                shape_id = items[0]
+                shape_pt_sequence = items[1]
+                shape_pt_lat = items[2]
+                shape_pt_lon = items[3]
+                obj = Shapes(shape_id, shape_pt_lat, shape_pt_lon, shape_pt_sequence, None)
+            elif foo == "manhattan" or foo == "brooklyn" or foo == "queens" or foo == "bronx" or foo == "staten_island":
+                shape_id = items[0]
+                shape_pt_lat = items[1]
+                shape_pt_lon = items[2]
+                shape_pt_sequence = items[3]
+                obj = Shapes(shape_id, shape_pt_lat, shape_pt_lon, shape_pt_sequence, None)
+            else:
+                shape_id = items[0]
+                shape_pt_sequence = items[1]
+                shape_pt_lat = items[2]
+                shape_pt_lon = items[3]
+                shape_dist_traveled = items[4]
+                obj = Shapes(shape_id, shape_pt_lat, shape_pt_lon, shape_pt_sequence, shape_dist_traveled)
             shapes[id] = obj
         elif function == "stop_times":
-            trip_id = item_list[0]
-            arrival = item_list[1]
-            departure = item_list[2]
-            stop_id = item_list[3]
-            stopseq = item_list[4]
-            headsign = item_list[5]
-            pickup_type = item_list[6]
-            dropoff_type = item_list[7]
-            shape_dist_traveled = item_list[8]
-            timepoint = item_list[9]
-            obj = StopTimes(trip_id, arrival, departure, stop_id, None, None, stopseq, headsign,
-                            None, None, pickup_type, dropoff_type,
-                            None, None, shape_dist_traveled, timepoint,
-                            None, None)
-            stop_times[(trip_id, stopseq)] = obj
+            if foo == "manhattan" or foo == "brooklyn" or foo == "queens" or foo == "bronx" or foo == "staten_island":
+                trip_id = items[0]
+                arrival_time = items[1]
+                departure_time = items[2]
+                stop_id = items[3]
+                stop_sequence = items[4]
+                pickup_type = items[5]
+                drop_off_type = items[6]
+                timepoint = items[7]
+                obj = StopTimes(trip_id, arrival_time, departure_time, stop_id, None, None,
+                                stop_sequence, None, None, None,
+                                pickup_type, drop_off_type, None, None, None, timepoint,
+                                None, None)
+            elif foo == "nyc_subway":
+                trip_id = items[0]
+                stop_id = items[1]
+                arrival_time = items[2]
+                departure_time = items[3]
+                stop_sequence = items[4]
+                obj = StopTimes(trip_id, arrival_time, departure_time, stop_id, None, None,
+                                stop_sequence, None, None, None,
+                                None, None, None, None, None, None,
+                                None, None)
+            elif foo == "chicago":
+                trip_id = items[0]
+                arrival_time = items[1]
+                departure_time = items[2]
+                stop_id = items[3]
+                stop_sequence = items[4]
+                stop_headsign = items[5]
+                pickup_type = items[6]
+                shape_dist_traveled = items[7]
+                obj = StopTimes(trip_id, arrival_time, departure_time, stop_id, None, None,
+                                stop_sequence, stop_headsign, None, None,
+                                pickup_type, None, None, None, shape_dist_traveled, None,
+                                None, None)
+            else:
+                trip_id = items[0]
+                arrival_time = items[1]
+                departure_time = items[2]
+                stop_id = items[3]
+                stop_sequence = items[4]
+                stop_headsign = items[5]
+                pickup_type = items[6]
+                drop_off_type = items[7]
+                shape_dist_traveled = items[8]
+                timepoint = items[9]
+                obj = StopTimes(trip_id, arrival_time, departure_time, stop_id, None, None,
+                                stop_sequence, stop_headsign, None, None,
+                                pickup_type, drop_off_type, None, None, shape_dist_traveled, timepoint,
+                                None, None)
+            stop_times[(trip_id, stop_sequence)] = obj
         elif function == "stops": # Configured normally
-            stop_id = item_list[0]
-            stop_code = item_list[1]
-            stop_name = item_list[2]
-            stop_desc = item_list[3]
-            stop_lat = item_list[4]
-            stop_lon = item_list[5]
-            zone_id = item_list[6]
-            stop_url = item_list[7]
-            location_type = item_list[8]
-            parent_station = item_list[9]
-            stop_timezone = item_list[10]
-            wheelchair_boarding = item_list[11]
-            obj = Stops(stop_id, stop_code, stop_name, None, stop_desc, stop_lat, stop_lon, zone_id,
-                        stop_url, location_type, parent_station, stop_timezone, wheelchair_boarding)
+            if foo == "nyc_subway":
+                stop_id = items[0]
+                stop_name = items[1]
+                stop_lat = items[2]
+                stop_lon = items[3]
+                location_type = items[4]
+                parent_station = items[5]
+                obj = Stops(stop_id, None, stop_name, None, None, stop_lat, stop_lon,
+                            None, None, location_type, parent_station, None, None, None, None)
+
+            elif foo == "manhattan" or foo == "brooklyn" or foo == "queens" or foo == "bronx" or foo == "staten_island":
+                stop_id = items[0]
+                stop_name = items[1]
+                stop_desc = items[2]
+                stop_lat = items[3]
+                stop_lon = items[4]
+                zone_id = items[5]
+                stop_url = items[6]
+                location_type = items[7]
+                parent_station = items[8]
+                obj = Stops(stop_id, None, stop_name, None, stop_desc, stop_lat, stop_lon, zone_id,
+                            stop_url, location_type, parent_station, None, None, None, None)
+            elif foo == "chicago":
+                stop_id = items[0]
+                stop_code = items[1]
+                stop_name = items[2]
+                stop_desc = items[3]
+                stop_lat = items[4]
+                stop_lon = items[5]
+                location_type = items[6]
+                parent_station = items[7]
+                wheelchair_boarding = items[8]
+                obj = Stops(stop_id, stop_code, stop_name, None, stop_desc, stop_lat, stop_lon, None,
+                            None, location_type, parent_station, None, None, None, None)
+            else:
+                stop_id = items[0]
+                stop_code = items[1]
+                stop_name = items[2]
+                stop_desc = items[3]
+                stop_lat = items[4]
+                stop_lon = items[5]
+                zone_id = items[6]
+                stop_url = items[7]
+                location_type = items[8]
+                parent_station = items[9]
+                stop_timezone = items[10]
+                wheelchair_boarding = items[11]
+                obj = Stops(stop_id, stop_code, stop_name, None, stop_desc, stop_lat, stop_lon, zone_id,
+                            stop_url, location_type, parent_station, stop_timezone, wheelchair_boarding, None, None)
             stops[stop_id] = obj
-        elif function == "transfers":
-            pass
         elif function == "trips":
-            if foo == "pgh":
-                trip_id = item_list[0]
-                route_id = item_list[1]
-                service_id = item_list[2]
+            if foo == "nyc_subway":
+                route_id = items[0]
+                trip_id = items[1]
+                service_id = items[2]
+                trip_headsign = items[3]
+                direction_id = items[4]
+                shape_id = items[5]
+                obj = Trips(route_id, service_id, trip_id, trip_headsign, None,
+                            direction_id, None, shape_id, None, None)
+            elif foo == "manhattan" or foo == "brooklyn" or foo == "queens" or foo == "bronx" or foo == "staten_island":
+                route_id = items[0]
+                service_id = items[1]
+                trip_id = items[2]
+                trip_headsign = items[3]
+                direction_id = items[4]
+                block_id = items[5]
+                shape_id = items[6]
+                obj = Trips(route_id, service_id, trip_id, trip_headsign, None,
+                            direction_id, block_id, shape_id, None, None)
+            elif foo == "chicago":
+                route_id = items[0]
+                service_id = items[1]
+                trip_id = items[2]
+                direction_id = items[3]
+                block_id = items[4]
+                shape_id = items[5]
+                wheelchair_accessible = items[6]
+                # schd_trip_id = items[7]  # EXCLUSIVE TO THE CTA, NOT IN THE STANDARD FEED!
+                obj = Trips(route_id, service_id, trip_id, None, None,
+                            direction_id, block_id, shape_id, wheelchair_accessible, None)
+            elif foo == "pgh":
+                trip_id = items[0]
+                route_id = items[1]
+                service_id = items[2]
+                trip_headsign = items[3]
+                trip_short_name = items[4]
+                direction_id = items[5]
+                block_id = items[6]
+                shape_id = items[7]
+                wheelchair_accessible = items[8]
+                bikes_allowed = items[9]
+                obj = Trips(route_id, service_id, trip_id, trip_headsign, trip_short_name,
+                            direction_id, block_id, shape_id, wheelchair_accessible, bikes_allowed)
+            elif foo == "seattle":
+                route_id = items[0]
+                service_id = items[1]
+                trip_id = items[2]
+                trip_headsign = items[3]
+                trip_short_name = items[4]
+                direction_id = items[5]
+                block_id = items[6]
+                shape_id = items[7]
+                # peak_flag = items[8]  # SEATTLE EXCLUSIVE
+                # fare_id = items[9]  # SEATTLE EXCLUSIVE
+                wheelchair_accessible = items[10]
+                bikes_allowed = items[11]
+                obj = Trips(route_id, service_id, trip_id, trip_headsign, trip_short_name,
+                            direction_id, block_id, shape_id, wheelchair_accessible, bikes_allowed)
             else:
-                route_id = item_list[0]
-                service_id = item_list[1]
-                trip_id = item_list[2]
-            headsign = item_list[3]
-            short_name = item_list[4]
-            direction_id = item_list[5]
-            block_id = item_list[6]
-            shape_id = item_list[7]
-            if foo == "sea":
-                peak_flag = item_list[8] # UNUSED, SPECIFIC TO SEATTLE
-                fare_id = item_list[9] # UNUSED, SPECIFIC TO SEATTLE
-                wheelchair = item_list[10]
-                bikes = item_list[11]
-            else:
-                wheelchair = item_list[8]
-                bikes = item_list[9]
-            obj = Trips(route_id, service_id, trip_id, headsign, short_name, 
-                        direction_id, block_id, shape_id, wheelchair, bikes)
+                route_id = items[0]
+                service_id = items[1]
+                trip_id = items[2]
+                trip_headsign = items[3]
+                trip_short_name = items[4]
+                direction_id = items[5]
+                block_id = items[6]
+                shape_id = items[7]
+                wheelchair_accessible = items[8]
+                bikes_allowed = items[9]
+                obj = Trips(route_id, service_id, trip_id, trip_headsign, trip_short_name,
+                            direction_id, block_id, shape_id, wheelchair_accessible, bikes_allowed)
             trips[trip_id] = obj
     if function == "agency":
         return agency
@@ -354,8 +547,6 @@ def text_processing(text, function, foo):
         return calendar_dates
     elif function == "calendar":
         return calendar
-    elif function == "feed":
-        return feed
     elif function == "routes":
         return routes
     elif function == "shapes":
@@ -364,8 +555,6 @@ def text_processing(text, function, foo):
         return stop_times
     elif function == "stops":
         return stops
-    elif function == "transfers":
-        return transfers
     elif function == "trips":
         return trips
 
@@ -375,8 +564,22 @@ def static_fetcher(foo, function):
         url = "static/pittsburgh/prt/" + f"{function}" + ".txt"
     elif foo == "satx":
         url = "static/san_antonio/via/" + f"{function}" + ".txt"
-    elif foo == "sea":
+    elif foo == "seattle":
         url = "static/seattle/king_county/" + f"{function}" + ".txt"
+    elif foo == "manhattan":
+        url = "static/new_york/mta_bus_manhattan/" + f"{function}" + ".txt"
+    elif foo == "nyc_subway":
+        url = "static/new_york/mta_subway/" + f"{function}" + ".txt"
+    elif foo == "brooklyn":
+        url = "static/new_york/mta_bus_brooklyn/" + f"{function}" + ".txt"
+    elif foo == "queens":
+        url = "static/new_york/mta_bus_queens/" + f"{function}" + ".txt"
+    elif foo == "chicago":
+        url = "static/chicago/cta/" + f"{function}" + ".txt"
+    elif foo == "bronx":
+        url = "static/new_york/mta_bus_bronx/" + f"{function}" + ".txt"
+    elif foo == "staten_island":
+        url = "static/new_york/mta_bus_staten_island/" + f"{function}" + ".txt"
     else:
         url = ""
     text = open(url, "r")
