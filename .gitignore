@@ -171,3 +171,5 @@ api_key.py
 # Added by cargo
 
 /target
+static/chicago/cta/stop_times.txt
+static/new_york/mta_bus_brooklyn/stop_times.txt
