@@ -44,4 +44,5 @@ def main(endpoint, output):
     print(f"\n\x1b[32mSuccessfully wrote output to \x1b[34m{output}\x1b[0m")
     return data
 
+main("http://gtfs.viainfo.net/vehicle/vehiclepositions.pb", "via")
 
