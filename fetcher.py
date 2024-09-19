@@ -43,6 +43,3 @@ def main(endpoint, output):
     print(f"\x1b[33m debug str has size \x1b[34m{len(fm_str) / 1000} KB\x1b[0m")
     print(f"\n\x1b[32mSuccessfully wrote output to \x1b[34m{output}\x1b[0m")
     return data
-
-main("http://gtfs.viainfo.net/vehicle/vehiclepositions.pb", "via")
-

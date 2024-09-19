@@ -6,6 +6,12 @@ import pprint as PP
 pp = PP.PrettyPrinter(indent=2)
 pprint = pp.pprint
 
+via_bus_trips = "http://gtfs.viainfo.net/tripupdate/tripupdates.pb"
+via_bus_vehicles = "http://gtfs.viainfo.net/vehicles/vehiclepositions.pb"
+prt_bus_trips = "https://truetime.portauthority.org/gtfsrt-bus/trips"
+prt_bus_vehicles = "https://truetime.portauthority.org/gtfsrt-bus/vehicles"
+prt_train_vehicles = "https://truetime.portauthority.org/gtfsrt-train/vehicles"
+prt_train_trips = "https://truetime.portauthority.org/gtfsrt-train/trips"
 
 def supported_cities():
     city_list = ["Pittsburgh", "San Antonio"]
@@ -37,21 +43,22 @@ def data_select(foo, function, city):
     length = len(function)
     raw_data = foo[length+1:]
     if city == "satx":
-        # vehicle_data = main(via_bus_vehicles, "./via_bus_vehicles.out")
-        # trip_data = main(via_bus_trips, "./via_bus_trips.out")
-        # vdata = processing(vehicle_data, "vehicle_position")
-        # tdata = processing(trip_data, "trip_update")
-        # data_analyzer(raw_data, function, vdata, tdata, city)
+        vehicle_data = main(via_bus_vehicles, "./via_bus_vehicles.out")
+        trip_data = main(via_bus_trips, "./via_bus_trips.out")
+        vdata = processing(vehicle_data, "vehicle_position")
+        tdata = processing(trip_data, "trip_update")
+        data_analyzer(raw_data, function, vdata, tdata, city)
         pass
     elif city == "pgh":
-        # vehicle_data = main(prt_bus_vehicles, "./prt_bus_vehicles.out")
-        # trip_data = main(prt_bus_trips, "./prt_bus_trips.out")
-        # trainData = main(prt_train_vehicles, "./prt_train_vehicles.out")
-        # trainTripData = main(prt_train_trips, "./prt_train_trips.out")
-        # vdata = processing(trainData, "vehicle_position")
-        # tdata = processing(trainTripData, "trip_update")
-        # data_analyzer(raw_data, function, vdata, tdata, city)
+        vehicle_data = main(prt_bus_vehicles, "./prt_bus_vehicles.out")
+        trip_data = main(prt_bus_trips, "./prt_bus_trips.out")
+        trainData = main(prt_train_vehicles, "./prt_train_vehicles.out")
+        trainTripData = main(prt_train_trips, "./prt_train_trips.out")
+        vdata = processing(vehicle_data, "vehicle_position")
+        tdata = processing(trip_data, "trip_update")
+        data_analyzer(raw_data, function, vdata, tdata, city)
         pass
+
     elif city == "nyc_subway":
         nyc = main("https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs", "./a.out")
 
