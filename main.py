@@ -6,6 +6,7 @@ import pprint as PP
 pp = PP.PrettyPrinter(indent=2)
 pprint = pp.pprint
 
+# Statically storing these here because I'm too lazy to make a function for it. 
 via_bus_trips = "http://gtfs.viainfo.net/tripupdate/tripupdates.pb"
 via_bus_vehicles = "http://gtfs.viainfo.net/vehicles/vehiclepositions.pb"
 prt_bus_trips = "https://truetime.portauthority.org/gtfsrt-bus/trips"
