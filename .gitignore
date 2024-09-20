@@ -177,3 +177,5 @@ static/new_york/mta_bus_brooklyn/stop_times.txt
 /env
 /env/lib
 env/lib/python3.12/site-packages/pip/_vendor/packaging/utils.py
+env/lib/python3.12/site-packages/pip-24.0.dist-info/entry_points.txt
+env/lib/python3.12/site-packages/pip/_vendor/cachecontrol/controller.py

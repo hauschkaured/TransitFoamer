@@ -8,7 +8,5 @@ term = Terminal()
 print(term.home + term.clear + term.move_y(term.height//2))
 print(term.center("Welcome to TransitFoamer!"))
 
-# This hides the cursor until you make a keypress.
-with term.cbreak(), term.hidden_cursor():
-    inp = term.inkey()
-    
+# term.width in a default terminal window is 80
+# term.height in a default terminal window is 24

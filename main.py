@@ -2,6 +2,10 @@ from fetcher import *
 from functions import *
 from trip_processing import *
 
+import numpy as np 
+import pandas as pd
+
+
 import pprint as PP
 pp = PP.PrettyPrinter(indent=2)
 pprint = pp.pprint
