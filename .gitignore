@@ -175,3 +175,5 @@ static/chicago/cta/stop_times.txt
 static/new_york/mta_bus_brooklyn/stop_times.txt
 
 /env
+/env/lib
+env/lib/python3.12/site-packages/pip/_vendor/packaging/utils.py
