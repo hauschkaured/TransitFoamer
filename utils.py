@@ -5,6 +5,9 @@ import pprint as PP
 pp = PP.PrettyPrinter(indent=2)
 pprint = pp.pprint
 
+def merge_dicts(dict1, dict2):
+    pprint(dict2)
+
 def static_analyzer(city):
     # agency = static_fetcher(city, "agency")
     # calendar = static_fetcher(city, "calendar")
