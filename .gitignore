@@ -167,6 +167,12 @@ cython_debug/
 .DS_Store
 data/apikey.txt
 
+# remove venv 
+env/
+
+# remove misc junk
+.idea/
+.vscode/
 
 # Added by cargo
 
