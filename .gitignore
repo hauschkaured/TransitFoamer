@@ -165,7 +165,7 @@ cython_debug/
 *.pyc
 *.out
 .DS_Store
-api_key.py
+data/apikey.txt
 
 
 # Added by cargo

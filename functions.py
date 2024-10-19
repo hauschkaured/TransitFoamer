@@ -19,6 +19,14 @@ def time_converter(foo):
     time_new = datetime.fromtimestamp(foo).strftime('%H:%M:%S')
     return time_new
 
+def buses_at_stop(data):
+    for item in data["bustime-response"]["prd"]:
+        if item['prdctdn'] == 'due':
+            print(f"{item['rt']} {item['des']} {item['vid']} is DUE.")
+            print(f"     Bus is {item['psgld']}")
+        else:
+            print(f"{item['rt']} {item['des']} {item['vid']} arrives in {item['prdctdn']} minutes.")
+            print(f"     Bus is {item['psgld']}")
 
 def bus_trip(foo, trip, vdata, tdata, city):
     bus_data = vdata.entity[foo]
@@ -68,15 +76,14 @@ def buses_in_range(foo, bar, vdata, tdata, city):
                     trip = bus.vehicle.trip.trip_id
                     bus_trip(str(i), trip, vdata, tdata, city)
 
-
 def buses_on_route(route, vdata, tdata, city):
     route_data = str(route)
+    print(f"The following buses are on Route {route_data}:")
     for bus in vdata.entity:
-        print
         if vdata.entity[bus].vehicle:
             if vdata.entity[bus].vehicle.trip:
+                print(vdata.entity[bus].vehicle.trip.route_id, route_data)
                 if vdata.entity[bus].vehicle.trip.route_id == route_data:
                     bus_id = vdata.entity[bus].vehicle.vehicle.id
                     trip = vdata.entity[bus].vehicle.trip.trip_id
-                    print("The following buses are on Route {route}:")
                     bus_trip(bus_id, trip, vdata, tdata, city)
