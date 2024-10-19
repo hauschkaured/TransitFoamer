@@ -58,6 +58,7 @@ def data_select(foo, function, city):
         vdata = processing(vehicle_data, "vehicle_position")
         tdata = processing(trip_data, "trip_update")
         data_analyzer(raw_data, function, vdata, tdata, city)
+        print("Trace: data_select")
         pass
 
     elif city == "nyc_subway":
@@ -72,6 +73,7 @@ def data_analyzer(raw_data, function, vdata, tdata, city):
                 values = list_of_values(item)
                 min_val = values[0]
                 max_val = values[1]
+                print("Trace: data_analyzer bus")
                 buses_in_range(min_val, max_val, vdata, tdata, city)
         elif function == "Stop":
             if item.count('-') > 0:
@@ -80,6 +82,7 @@ def data_analyzer(raw_data, function, vdata, tdata, city):
                 pass
         elif function == "Route":
             route = item
+            print("Trace: data_analyzer route")
             buses_on_route(route, vdata, tdata, city)
     
 

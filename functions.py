@@ -72,6 +72,7 @@ def buses_in_range(foo, bar, vdata, tdata, city):
 def buses_on_route(route, vdata, tdata, city):
     route_data = str(route)
     for bus in vdata.entity:
+        print
         if vdata.entity[bus].vehicle:
             if vdata.entity[bus].vehicle.trip:
                 if vdata.entity[bus].vehicle.trip.route_id == route_data:
